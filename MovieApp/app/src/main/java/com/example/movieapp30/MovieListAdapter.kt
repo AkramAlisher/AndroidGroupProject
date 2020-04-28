@@ -68,7 +68,7 @@ class MovieListAdapter(
         }
 
         fun postCnt(): Int {
-            cnt = cnt+1
+            cnt = cnt + 1
             return cnt
         }
 

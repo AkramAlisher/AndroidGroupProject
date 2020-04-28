@@ -2,9 +2,7 @@ package com.example.movieapp30
 
 import android.graphics.Color
 import android.os.Bundle
-import android.util.Log
 import android.widget.*
-import android.widget.RatingBar.OnRatingBarChangeListener
 import androidx.appcompat.app.AppCompatActivity
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.bumptech.glide.Glide
@@ -13,37 +11,47 @@ import com.example.movieapp30.login.CurrentUser
 import com.example.movieapp30.model.Movie
 import com.example.movieapp30.model.MovieResponse
 import com.google.gson.JsonObject
-import retrofit2.Call
-import retrofit2.Callback
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import retrofit2.Response
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.coroutines.CoroutineContext
 
 
-class movieDetails : AppCompatActivity() {
+class movieDetails : AppCompatActivity(), CoroutineScope {
 
     var movieId: Int = 0
     var isLiked = false
     lateinit var movie: Movie
+    lateinit var swipeRefreshLayout: SwipeRefreshLayout
     lateinit var favouriteMovie: List<Movie>
     lateinit var likeButton: Button
-    lateinit var swipeRefreshLayout: SwipeRefreshLayout
+
+    private val job = Job()
+
+    override val coroutineContext: CoroutineContext
+        get() = Dispatchers.Main + job
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.fragment_movie_detail)
 
-        movieId = intent.getIntExtra("movieId", 0)
+        swipeRefreshLayout = findViewById(R.id.movie_detail_refresh)
 
-        swipeRefreshLayout = findViewById(R.id.movie_details_refresh)
         swipeRefreshLayout.setOnRefreshListener {
             getMovie()
         }
+
+        movieId = intent.getIntExtra("movieId", 0)
 
         getMovie()
     }
 
     fun initVariables(){
+
         var dateFormat = SimpleDateFormat("MMMM d, YYYY", Locale.ENGLISH)
         var initialFormat = SimpleDateFormat("YY-MM-DD", Locale.ENGLISH)
         var title = findViewById<TextView>(R.id.movie_title)
@@ -74,7 +82,7 @@ class movieDetails : AppCompatActivity() {
         backButton.setOnClickListener {
             finish()
         }
-        
+
         if(CurrentUser.session_id != "") {
             getFavouritesMovies()
 
@@ -90,19 +98,16 @@ class movieDetails : AppCompatActivity() {
     }
 
     fun markAsFavourite(){
-        val body = JsonObject().apply {
-            addProperty("media_type", "movie")
-            addProperty("media_id", movieId)
-            addProperty("favorite", !isLiked)
-        }
-        RetrofitService.getPostApi().markAsFavourite(CurrentUser.account_id, CurrentUser.api_key, CurrentUser.session_id, body).enqueue(object :
-            Callback<JsonObject> {
-            override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
-                Log.d(
-                    "markAsFavourite",
-                    response.body().toString()
-                )
-                if (response.isSuccessful) {
+        launch {
+            try {
+                val body = JsonObject().apply {
+                    addProperty("media_type", "movie")
+                    addProperty("media_id", movieId)
+                    addProperty("favorite", !isLiked)
+                }
+                val response: Response<JsonObject> =
+                    RetrofitService.getPostApi().markAsFavourite(CurrentUser.account_id, CurrentUser.api_key, CurrentUser.session_id, body)
+                if (response.isSuccessful){
                     if(!isLiked)
                         Toast.makeText(
                             this@movieDetails,
@@ -117,93 +122,52 @@ class movieDetails : AppCompatActivity() {
                         ).show()
                     getFavouritesMovies()
                 }
+            } catch (e: Exception){
+                Toast.makeText( this@movieDetails, "We have problems with the internet!", Toast.LENGTH_LONG).show()
             }
+        }
+    }
 
-            override fun onFailure(call: Call<JsonObject>, t: Throwable) {
-                Log.d(
-                    "CreateGuestSession",
-                    t.message
-                )
-                Toast.makeText(
-                    this@movieDetails,
-                    "Retry once more!",
-                    Toast.LENGTH_LONG
-                ).show()
-
+    fun getMovie(){
+        swipeRefreshLayout.isRefreshing = true
+        launch {
+            try {
+                val lang = "en-US"
+                val response: Response<Movie> =
+                    RetrofitService.getPostApi().getMovie(movieId, CurrentUser.api_key, lang)
+                if (response.isSuccessful){
+                    movie = response.body()!!
+                    initVariables()
+                }
+            } catch (e: Exception){
+                Toast.makeText( this@movieDetails, "We have problems with the internet!", Toast.LENGTH_LONG).show()
             }
-        })
+        }
     }
 
     fun getFavouritesMovies(){
-        val lang: String = "en-US"
-        RetrofitService.getPostApi().getFavouritesMoviesList(CurrentUser.account_id, CurrentUser.api_key, CurrentUser.session_id,1, lang).enqueue(object :
-            Callback<MovieResponse> {
-            override fun onResponse(call: Call<MovieResponse>, response: Response<MovieResponse>) {
-                Log.d(
-                    "markAsFavourite",
-                    response.body().toString()
-                )
-
-                if (response.isSuccessful) {
+        launch {
+            try {
+                val lang = "en-US"
+                val response: Response<MovieResponse> =
+                    RetrofitService.getPostApi().getFavouritesMoviesList(CurrentUser.account_id, CurrentUser.api_key, CurrentUser.session_id,1, lang)
+                if (response.isSuccessful){
                     favouriteMovie = response.body()?.results!!
                     for (film in favouriteMovie){
                         if(movieId == film.id){
                             likeButton.setBackgroundColor(Color.rgb(227, 94, 1))
                             isLiked = true
                             swipeRefreshLayout.isRefreshing = false
-                            return;
+                            return@launch
                         }
                     }
                     likeButton.setBackgroundColor(Color.WHITE)
                     swipeRefreshLayout.isRefreshing = false
                 }
+            } catch (e: Exception){
+                Toast.makeText( this@movieDetails, "We have problems with the internet!", Toast.LENGTH_LONG).show()
             }
-
-            override fun onFailure(call: Call<MovieResponse>, t: Throwable) {
-                Log.d(
-                    "CreateGuestSession",
-                    t.message
-                )
-                Toast.makeText(
-                    this@movieDetails,
-                    "Retry once more!",
-                    Toast.LENGTH_LONG
-                ).show()
-
-            }
-        })
-    }
-
-    fun getMovie(){
-        swipeRefreshLayout.isRefreshing = true
-        val lang = "en-US"
-        RetrofitService.getPostApi().getMovie(movieId, CurrentUser.api_key, lang).enqueue(object :
-            Callback<Movie> {
-            override fun onResponse(call: Call<Movie>, response: Response<Movie>) {
-                Log.d(
-                    "markAsFavourite",
-                    response.body().toString()
-                )
-
-                if (response.isSuccessful) {
-                    movie = response.body()!!
-                    initVariables()
-                }
-            }
-
-            override fun onFailure(call: Call<Movie>, t: Throwable) {
-                Log.d(
-                    "CreateGuestSession",
-                    t.message
-                )
-                Toast.makeText(
-                    this@movieDetails,
-                    "Retry once more!",
-                    Toast.LENGTH_LONG
-                ).show()
-
-            }
-        })
+        }
     }
 }
 

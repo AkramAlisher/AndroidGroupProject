@@ -3,11 +3,29 @@ package com.example.movieapp30
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.viewpager.widget.ViewPager
 import androidx.viewpager.widget.ViewPager.OnPageChangeListener
+import com.example.movieapp30.api.PostApi
+import com.example.movieapp30.api.RetrofitService
+import com.example.movieapp30.fragments.AllFilmsFragment
 import com.example.movieapp30.login.CurrentUser
+import com.example.movieapp30.model.Movie
+import com.example.movieapp30.model.MovieResponse
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.gson.GsonBuilder
+import com.google.gson.reflect.TypeToken
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import java.lang.reflect.Type
+import java.util.ArrayList
+import kotlin.coroutines.CoroutineContext
 
 class MainActivity : AppCompatActivity() {
 
@@ -46,7 +64,8 @@ class MainActivity : AppCompatActivity() {
 
     private fun initFragmentPagerAdapter() {
         viewPager = findViewById(R.id.viewPager)
-        val pagerAdapter = com.example.movieapp30.fragments.PagerAdapter(supportFragmentManager)
+        val pagerAdapter =
+            com.example.movieapp30.fragments.PagerAdapter(supportFragmentManager)
         viewPager.adapter = pagerAdapter
         viewPager.addOnPageChangeListener(object : OnPageChangeListener {
             override fun onPageScrolled(
@@ -92,10 +111,5 @@ class MainActivity : AppCompatActivity() {
         super.onStart()
         Log.i("MainActivity", "onStart")
         initCurrentUser()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        Log.i("MainActivity", "onDestroy")
     }
 }

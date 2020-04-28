@@ -18,18 +18,26 @@ import com.example.movieapp30.api.RetrofitService
 import com.example.movieapp30.login.CurrentUser
 import com.example.movieapp30.model.Movie
 import com.example.movieapp30.model.MovieResponse
-import retrofit2.Call
-import retrofit2.Callback
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import retrofit2.Response
 import java.util.ArrayList
+import kotlin.coroutines.CoroutineContext
 
-class FavouriteFragment: Fragment()  {
+class FavouriteFragment: Fragment(), CoroutineScope {
 
     lateinit var recyclerView: RecyclerView
     lateinit var swipeRefreshLayout: SwipeRefreshLayout
     lateinit var appBarTitle: TextView
     private var movieListAdapter: MovieListAdapter? = null
     var movies: List<Movie>? = ArrayList()
+
+    private val job = Job()
+
+    override val coroutineContext: CoroutineContext
+        get() = Dispatchers.Main + job
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -41,47 +49,36 @@ class FavouriteFragment: Fragment()  {
 
         appBarTitle = view.findViewById(R.id.appbar_title)
         recyclerView = view.findViewById(R.id.favourite_recycle_view)
+        swipeRefreshLayout = view.findViewById(R.id.favourite_films_refresh)
         recyclerView.layoutManager = LinearLayoutManager(activity)
         recyclerView.itemAnimator = DefaultItemAnimator()
-        swipeRefreshLayout = view.findViewById(R.id.favourite_films_refresh)
 
         swipeRefreshLayout.setOnRefreshListener {
-            getFavouritesMovies()
+            getFavouriteMoviesCoroutine()
         }
+
 
         return view
     }
 
-    fun getFavouritesMovies(){
+    private fun getFavouriteMoviesCoroutine(){
         swipeRefreshLayout.isRefreshing = true
         val lang: String = "en-US"
-        RetrofitService.getPostApi().getFavouritesMoviesList(CurrentUser.account_id, CurrentUser.api_key, CurrentUser.session_id,1, lang).enqueue(object :
-            Callback<MovieResponse> {
-            override fun onResponse(call: Call<MovieResponse>, response: Response<MovieResponse>) {
-                Log.d(
-                    "markAsFavourite",
-                    response.body().toString()
-                )
-
-                if (response.isSuccessful) {
+        launch {
+            try {
+                val response: Response<MovieResponse> =
+                    RetrofitService.getPostApi().getFavouritesMoviesList(CurrentUser.account_id, CurrentUser.api_key, CurrentUser.session_id,1, lang)
+                if (response.isSuccessful){
                     movies = response.body()?.results
-                    movieListAdapter = MovieListAdapter(movies, context)
-                    recyclerView.adapter = movieListAdapter
-                    swipeRefreshLayout.isRefreshing = false
                 }
-            }
-
-            override fun onFailure(call: Call<MovieResponse>, t: Throwable) {
-                Log.d(
-                    "CreateGuestSession",
-                    t.message
-                )
-                Toast.makeText(this@FavouriteFragment.context, "Please, check your connection!", Toast.LENGTH_LONG).show()
-                movieListAdapter = MovieListAdapter(movies, context)
+            } catch (e: Exception){
+                Toast.makeText(this@FavouriteFragment.context, "We have problems with the internet!", Toast.LENGTH_LONG).show()
+            } finally {
+                movieListAdapter = MovieListAdapter(movies, this@FavouriteFragment.context)
                 recyclerView.adapter = movieListAdapter
                 swipeRefreshLayout.isRefreshing = false
             }
-        })
+        }
     }
 
     override fun onResume() {
@@ -89,7 +86,7 @@ class FavouriteFragment: Fragment()  {
         Log.e("FavFragment", "onResume")
         if(CurrentUser.session_id != "") {
             appBarTitle.setText("My favourite films")
-            getFavouritesMovies()
+            getFavouriteMoviesCoroutine()
         }else{
             appBarTitle.setText("Please, log in!")
             movieListAdapter?.moviesList = null
@@ -102,7 +99,7 @@ class FavouriteFragment: Fragment()  {
         if(isVisibleToUser){
             if(CurrentUser.session_id != "") {
                 appBarTitle.setText("My favourite films")
-                getFavouritesMovies()
+                getFavouriteMoviesCoroutine()
             }else {
                 appBarTitle.setText("Please, log in!")
                 movieListAdapter?.moviesList = null
