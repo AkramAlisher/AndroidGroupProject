@@ -1599,7 +1599,7 @@ int id month_title 0x7f0a00ba
 int id movieId 0x7f0a00bb
 int id movie_country2 0x7f0a00bc
 int id movie_date 0x7f0a00bd
-int id movie_details_refresh 0x7f0a00be
+int id movie_detail_refresh 0x7f0a00be
 int id movie_parent 0x7f0a00bf
 int id movie_poster 0x7f0a00c0
 int id movie_rating 0x7f0a00c1
