@@ -21,9 +21,9 @@
         android:supportsRtl="true"
         android:testOnly="true"
         android:theme="@style/AppTheme" >
-        <activity android:name="com.example.movieapp30.MovieDetails" />
-        <activity android:name="com.example.movieapp30.login.LoginActivity" />
-        <activity android:name="com.example.movieapp30.MainActivity" >
+        <activity android:name="com.example.movieapp30.view.MovieDetails" />
+        <activity android:name="com.example.movieapp30.view.LoginActivity" />
+        <activity android:name="com.example.movieapp30.view.MainActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

@@ -227,13 +227,6 @@
             
             <flag name="all" value="0x77"/>
         </attr>
-    </declare-styleable></file></source></dataSet><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="androidx.fragment:fragment:1.2.0$Generated" generated="true" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="C:\Users\Admin\.gradle\caches\transforms-2\files-2.1\9d218b3791473785315945919b3a8fcb\fragment-1.2.0\res"/></dataSet><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="androidx.fragment:fragment:1.2.0" from-dependency="true" generated-set="androidx.fragment:fragment:1.2.0$Generated" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="C:\Users\Admin\.gradle\caches\transforms-2\files-2.1\9d218b3791473785315945919b3a8fcb\fragment-1.2.0\res"><file path="C:\Users\Admin\.gradle\caches\transforms-2\files-2.1\9d218b3791473785315945919b3a8fcb\fragment-1.2.0\res\values\values.xml" qualifiers=""><item name="fragment_container_view_tag" type="id"/><item name="visible_removing_fragment_view_tag" type="id"/><declare-styleable name="Fragment">
-        <attr name="android:name"/>
-        <attr name="android:id"/>
-        <attr name="android:tag"/>
-    </declare-styleable><declare-styleable name="FragmentContainerView">
-        <attr name="android:name"/>
-        <attr name="android:tag"/>
     </declare-styleable></file></source></dataSet><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="androidx.appcompat:appcompat-resources:1.1.0$Generated" generated="true" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="C:\Users\Admin\.gradle\caches\transforms-2\files-2.1\dab71f1440551d6884879c08253a13a7\jetified-appcompat-resources-1.1.0\res"/></dataSet><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="androidx.appcompat:appcompat-resources:1.1.0" from-dependency="true" generated-set="androidx.appcompat:appcompat-resources:1.1.0$Generated" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="C:\Users\Admin\.gradle\caches\transforms-2\files-2.1\dab71f1440551d6884879c08253a13a7\jetified-appcompat-resources-1.1.0\res"><file path="C:\Users\Admin\.gradle\caches\transforms-2\files-2.1\dab71f1440551d6884879c08253a13a7\jetified-appcompat-resources-1.1.0\res\values\values.xml" qualifiers=""><declare-styleable name="AnimatedStateListDrawableCompat">
         
         <attr name="android:visible"/>
@@ -281,6 +274,13 @@
     </declare-styleable><declare-styleable name="StateListDrawableItem">
         
         <attr name="android:drawable"/>
+    </declare-styleable></file></source></dataSet><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="androidx.fragment:fragment:1.2.0$Generated" generated="true" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="C:\Users\Admin\.gradle\caches\transforms-2\files-2.1\9d218b3791473785315945919b3a8fcb\fragment-1.2.0\res"/></dataSet><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="androidx.fragment:fragment:1.2.0" from-dependency="true" generated-set="androidx.fragment:fragment:1.2.0$Generated" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="C:\Users\Admin\.gradle\caches\transforms-2\files-2.1\9d218b3791473785315945919b3a8fcb\fragment-1.2.0\res"><file path="C:\Users\Admin\.gradle\caches\transforms-2\files-2.1\9d218b3791473785315945919b3a8fcb\fragment-1.2.0\res\values\values.xml" qualifiers=""><item name="fragment_container_view_tag" type="id"/><item name="visible_removing_fragment_view_tag" type="id"/><declare-styleable name="Fragment">
+        <attr name="android:name"/>
+        <attr name="android:id"/>
+        <attr name="android:tag"/>
+    </declare-styleable><declare-styleable name="FragmentContainerView">
+        <attr name="android:name"/>
+        <attr name="android:tag"/>
     </declare-styleable></file></source></dataSet><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="de.hdodenhof:circleimageview:3.1.0$Generated" generated="true" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="C:\Users\Admin\.gradle\caches\transforms-2\files-2.1\828ad800fbc30c1331c4f024f4304f79\jetified-circleimageview-3.1.0\res"/></dataSet><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="de.hdodenhof:circleimageview:3.1.0" from-dependency="true" generated-set="de.hdodenhof:circleimageview:3.1.0$Generated" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="C:\Users\Admin\.gradle\caches\transforms-2\files-2.1\828ad800fbc30c1331c4f024f4304f79\jetified-circleimageview-3.1.0\res"><file path="C:\Users\Admin\.gradle\caches\transforms-2\files-2.1\828ad800fbc30c1331c4f024f4304f79\jetified-circleimageview-3.1.0\res\values\values.xml" qualifiers=""><declare-styleable name="CircleImageView">
         <attr format="dimension" name="civ_border_width"/>
         <attr format="color" name="civ_border_color"/>
