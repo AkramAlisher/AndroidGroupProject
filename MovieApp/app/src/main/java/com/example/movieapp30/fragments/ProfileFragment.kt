@@ -19,18 +19,28 @@ import com.example.movieapp30.login.LoginActivity
 import com.google.gson.JsonObject
 import com.google.gson.reflect.TypeToken
 import de.hdodenhof.circleimageview.CircleImageView
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import java.lang.reflect.Type
 import java.util.*
+import kotlin.coroutines.CoroutineContext
 
 
-class ProfileFragment : Fragment() {
+class ProfileFragment : Fragment(), CoroutineScope {
 
     private lateinit var login_logout_button: Button
     private lateinit var profile_username: TextView
     private lateinit var profile_image: CircleImageView
+
+    private val job = Job()
+
+    override val coroutineContext: CoroutineContext
+        get() = Dispatchers.Main + job
 
     val LOG_TAG = "ProfileFragment"
 
@@ -80,40 +90,26 @@ class ProfileFragment : Fragment() {
     }
 
     fun deleteSession(){
-        val body = JsonObject().apply {
-            addProperty("session_id", CurrentUser.session_id)
-        }
-        RetrofitService.getPostApi().deleteSession(CurrentUser.api_key, body).enqueue(object :
-            Callback<JsonObject> {
-            override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
-                Log.d(
-                    "markAsFavourite",
-                    response.body().toString()
-                )
-
-                if (response.isSuccessful) {
+        launch {
+            try {
+                val body = JsonObject().apply {
+                    addProperty("session_id", CurrentUser.session_id)
+                }
+                val response: Response<JsonObject> =
+                    RetrofitService.getPostApi().deleteSession(CurrentUser.api_key, body)
+                if (response.isSuccessful){
+                    CurrentUser.session_id = ""
+                    checkStatus()
                     Toast.makeText(
                         context,
                         "You was successful log out!",
                         Toast.LENGTH_LONG
                     ).show()
-                    CurrentUser.session_id = ""
-                    checkStatus()
                 }
+            } catch (e: Exception){
+                //Toast.makeText( this@ProfileFragment.context, "We have problems with the internet!", Toast.LENGTH_LONG).show()
+                Toast.makeText( this@ProfileFragment.context, e.toString(), Toast.LENGTH_LONG).show()
             }
-
-            override fun onFailure(call: Call<JsonObject>, t: Throwable) {
-                Log.d(
-                    "CreateGuestSession",
-                    t.message
-                )
-                Toast.makeText(
-                    context,
-                    "Retry once more!",
-                    Toast.LENGTH_LONG
-                ).show()
-
-            }
-        })
+        }
     }
 }

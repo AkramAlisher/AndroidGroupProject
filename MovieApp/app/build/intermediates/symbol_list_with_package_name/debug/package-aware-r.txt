@@ -1600,7 +1600,7 @@ id month_title
 id movieId
 id movie_country2
 id movie_date
-id movie_details_refresh
+id movie_detail_refresh
 id movie_parent
 id movie_poster
 id movie_rating
