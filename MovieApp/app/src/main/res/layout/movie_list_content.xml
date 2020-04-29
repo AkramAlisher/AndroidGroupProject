@@ -20,7 +20,7 @@
 
     <androidx.cardview.widget.CardView
         android:layout_width="0dp"
-        android:layout_height="110dp"
+        android:layout_height="wrap_content"
         android:layout_marginTop="30dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -32,12 +32,12 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:paddingTop="7dp"
-            android:paddingBottom="5dp">
+            android:paddingBottom="7dp">
 
             <ImageView
                 android:id="@+id/movie_poster"
-                android:layout_width="190dp"
-                android:layout_height="match_parent"
+                android:layout_width="250dp"
+                android:layout_height="150dp"
                 android:layout_weight="1"
                 tools:srcCompat="@tools:sample/avatars" />
 
@@ -51,7 +51,6 @@
                     android:id="@+id/movie_title"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="8dp"
                     android:text="Title"
                     android:textColor="@android:color/black"
                     android:textSize="14sp"
@@ -61,7 +60,6 @@
                     android:id="@+id/original_title"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="8dp"
                     android:layout_marginTop="5dp"
                     android:text="OriginalTitle"
                     android:textColor="@android:color/black"
@@ -71,7 +69,6 @@
                     android:id="@+id/movie_date"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="8dp"
                     android:layout_marginTop="5dp"
                     android:text="Date"
                     android:textSize="12sp" />
@@ -79,7 +76,6 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="8dp"
                     android:layout_marginTop="5dp"
                     android:orientation="horizontal">
 
