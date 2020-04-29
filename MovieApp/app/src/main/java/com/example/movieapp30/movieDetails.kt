@@ -9,12 +9,10 @@ import com.bumptech.glide.Glide
 import com.example.movieapp30.api.RetrofitService
 import com.example.movieapp30.login.CurrentUser
 import com.example.movieapp30.model.Movie
+import com.example.movieapp30.model.MovieDatabase
 import com.example.movieapp30.model.MovieResponse
 import com.google.gson.JsonObject
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import retrofit2.Response
 import java.text.SimpleDateFormat
 import java.util.*
@@ -29,6 +27,7 @@ class movieDetails : AppCompatActivity(), CoroutineScope {
     lateinit var swipeRefreshLayout: SwipeRefreshLayout
     var favouriteMovie: List<Movie>? = null
     lateinit var likeButton: Button
+    var movieDao = MovieDatabase.getDatabase(context = this).movieDao()
 
     private val job = Job()
 
@@ -65,16 +64,16 @@ class movieDetails : AppCompatActivity(), CoroutineScope {
         likeButton = findViewById(R.id.likeButton)
 
         title.text = (movie?.title ?: String).toString()
-        originalTitle.text = (movie?.original_title ?: String).toString()
+        originalTitle.text = (movie?.originalTitle ?: String).toString()
         description.text = (movie?.overview ?: String).toString()
-        movieRating.text = movie?.vote_average.toString()
-        movieRatingBar.rating = (movie?.vote_average?.toFloat() ?: Float) as Float
+        movieRating.text = movie?.voteAverage.toString()
+        movieRatingBar.rating = (movie?.voteAverage?.toFloat() ?: Float) as Float
 
-        val dateTime = initialFormat.parse(movie?.release_date)
+        val dateTime = initialFormat.parse(movie?.releaseDate)
         date.text = dateFormat.format(dateTime)
-        voteCount.text = movie?.vote_count.toString()
+        voteCount.text = movie?.voteCount.toString()
         Glide.with(this)
-            .load(movie?.getPosterPath())
+            .load(movie?.getPosterPaths())
             .into(image)
 
         backButton.setOnClickListener {
@@ -114,6 +113,7 @@ class movieDetails : AppCompatActivity(), CoroutineScope {
                 }
             } catch (e: Exception) {
                 Toast.makeText(this@movieDetails, "Please, check your internet connection!", Toast.LENGTH_LONG).show()
+                swipeRefreshLayout.isRefreshing = false
             }
         }
     }
@@ -131,6 +131,20 @@ class movieDetails : AppCompatActivity(), CoroutineScope {
                 }
             } catch (e: Exception) {
                 Toast.makeText(this@movieDetails, "Please, check your internet connection!", Toast.LENGTH_LONG).show()
+                var movies: List<Movie>? = null
+                withContext(Dispatchers.IO) {
+                    movies = movieDao?.getAll()
+                }
+                movies.let {
+                    if (it != null) {
+                        for (film in it) {
+                            if (movieId == film.id) {
+                                movie = film
+                                initVariables()
+                            }
+                        }
+                    }
+                }
             }
         }
     }
@@ -160,6 +174,7 @@ class movieDetails : AppCompatActivity(), CoroutineScope {
                 }
             } catch (e: Exception) {
                 Toast.makeText(this@movieDetails, "Please, check your internet connection!", Toast.LENGTH_LONG).show()
+                swipeRefreshLayout.isRefreshing = false
             }
         }
     }

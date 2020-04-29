@@ -69,16 +69,26 @@
 40-->[com.squareup.picasso:picasso:2.71828] C:\Users\Admin\.gradle\caches\transforms-2\files-2.1\b701a963f988ef82be4b0e3bb784b02b\jetified-picasso-2.71828\AndroidManifest.xml:10:13-72
 41            android:exported="false" />
 41-->[com.squareup.picasso:picasso:2.71828] C:\Users\Admin\.gradle\caches\transforms-2\files-2.1\b701a963f988ef82be4b0e3bb784b02b\jetified-picasso-2.71828\AndroidManifest.xml:11:13-37
-42        <provider
-42-->[androidx.lifecycle:lifecycle-process:2.2.0] C:\Users\Admin\.gradle\caches\transforms-2\files-2.1\947784002ee3beb119b03fab89e29848\jetified-lifecycle-process-2.2.0\AndroidManifest.xml:25:9-29:43
-43            android:name="androidx.lifecycle.ProcessLifecycleOwnerInitializer"
-43-->[androidx.lifecycle:lifecycle-process:2.2.0] C:\Users\Admin\.gradle\caches\transforms-2\files-2.1\947784002ee3beb119b03fab89e29848\jetified-lifecycle-process-2.2.0\AndroidManifest.xml:26:13-79
-44            android:authorities="com.example.movieapp30.lifecycle-process"
-44-->[androidx.lifecycle:lifecycle-process:2.2.0] C:\Users\Admin\.gradle\caches\transforms-2\files-2.1\947784002ee3beb119b03fab89e29848\jetified-lifecycle-process-2.2.0\AndroidManifest.xml:27:13-69
-45            android:exported="false"
-45-->[androidx.lifecycle:lifecycle-process:2.2.0] C:\Users\Admin\.gradle\caches\transforms-2\files-2.1\947784002ee3beb119b03fab89e29848\jetified-lifecycle-process-2.2.0\AndroidManifest.xml:28:13-37
-46            android:multiprocess="true" />
-46-->[androidx.lifecycle:lifecycle-process:2.2.0] C:\Users\Admin\.gradle\caches\transforms-2\files-2.1\947784002ee3beb119b03fab89e29848\jetified-lifecycle-process-2.2.0\AndroidManifest.xml:29:13-40
-47    </application>
-48
-49</manifest>
+42
+43        <service
+43-->[androidx.room:room-runtime:2.2.5] C:\Users\Admin\.gradle\caches\transforms-2\files-2.1\999480bd266ddc4f4caad3c937cd7449\room-runtime-2.2.5\AndroidManifest.xml:25:9-28:40
+44            android:name="androidx.room.MultiInstanceInvalidationService"
+44-->[androidx.room:room-runtime:2.2.5] C:\Users\Admin\.gradle\caches\transforms-2\files-2.1\999480bd266ddc4f4caad3c937cd7449\room-runtime-2.2.5\AndroidManifest.xml:26:13-74
+45            android:directBootAware="true"
+45-->[androidx.room:room-runtime:2.2.5] C:\Users\Admin\.gradle\caches\transforms-2\files-2.1\999480bd266ddc4f4caad3c937cd7449\room-runtime-2.2.5\AndroidManifest.xml:27:13-43
+46            android:exported="false" />
+46-->[androidx.room:room-runtime:2.2.5] C:\Users\Admin\.gradle\caches\transforms-2\files-2.1\999480bd266ddc4f4caad3c937cd7449\room-runtime-2.2.5\AndroidManifest.xml:28:13-37
+47
+48        <provider
+48-->[androidx.lifecycle:lifecycle-process:2.2.0] C:\Users\Admin\.gradle\caches\transforms-2\files-2.1\947784002ee3beb119b03fab89e29848\jetified-lifecycle-process-2.2.0\AndroidManifest.xml:25:9-29:43
+49            android:name="androidx.lifecycle.ProcessLifecycleOwnerInitializer"
+49-->[androidx.lifecycle:lifecycle-process:2.2.0] C:\Users\Admin\.gradle\caches\transforms-2\files-2.1\947784002ee3beb119b03fab89e29848\jetified-lifecycle-process-2.2.0\AndroidManifest.xml:26:13-79
+50            android:authorities="com.example.movieapp30.lifecycle-process"
+50-->[androidx.lifecycle:lifecycle-process:2.2.0] C:\Users\Admin\.gradle\caches\transforms-2\files-2.1\947784002ee3beb119b03fab89e29848\jetified-lifecycle-process-2.2.0\AndroidManifest.xml:27:13-69
+51            android:exported="false"
+51-->[androidx.lifecycle:lifecycle-process:2.2.0] C:\Users\Admin\.gradle\caches\transforms-2\files-2.1\947784002ee3beb119b03fab89e29848\jetified-lifecycle-process-2.2.0\AndroidManifest.xml:28:13-37
+52            android:multiprocess="true" />
+52-->[androidx.lifecycle:lifecycle-process:2.2.0] C:\Users\Admin\.gradle\caches\transforms-2\files-2.1\947784002ee3beb119b03fab89e29848\jetified-lifecycle-process-2.2.0\AndroidManifest.xml:29:13-40
+53    </application>
+54
+55</manifest>
