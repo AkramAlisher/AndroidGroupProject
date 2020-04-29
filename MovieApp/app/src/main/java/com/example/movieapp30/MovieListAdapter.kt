@@ -60,7 +60,7 @@ class MovieListAdapter(
                 .into(poster)
 
             parent.setOnClickListener {
-                val intent = Intent(it.context, movieDetails::class.java)
+                val intent = Intent(it.context, MovieDetails::class.java)
                 intent.putExtra("movieId", movie?.id)
                 context?.startActivity(intent)
             }

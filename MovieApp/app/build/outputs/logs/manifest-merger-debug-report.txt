@@ -115,7 +115,7 @@ MERGED from [androidx.versionedparcelable:versionedparcelable:1.1.0] C:\Users\Ad
 		ADDED from C:\Users\Admin\Documents\Documents\AndroidGroupProject\MovieApp\app\src\main\AndroidManifest.xml:8:9-35
 	android:theme
 		ADDED from C:\Users\Admin\Documents\Documents\AndroidGroupProject\MovieApp\app\src\main\AndroidManifest.xml:13:9-40
-activity#com.example.movieapp30.movieDetails
+activity#com.example.movieapp30.MovieDetails
 ADDED from C:\Users\Admin\Documents\Documents\AndroidGroupProject\MovieApp\app\src\main\AndroidManifest.xml:14:9-59
 	android:name
 		ADDED from C:\Users\Admin\Documents\Documents\AndroidGroupProject\MovieApp\app\src\main\AndroidManifest.xml:14:19-47

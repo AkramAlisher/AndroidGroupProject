@@ -26,17 +26,17 @@ class MainActivity : AppCompatActivity() {
         if(CurrentUser.needToInit) {
             Log.d("MainActivity", "initCurrentUser")
             var pref: SharedPreferences = getSharedPreferences("MyPref", 0)
-            val session_id = pref.getString("session_id", null)
-            val account_id = pref.getInt("account_id", 0)
+            val sessionId = pref.getString("session_id", null)
+            val accountId = pref.getInt("account_id", 0)
 
-            CurrentUser.sessionId = session_id.toString()
-            CurrentUser.accountId = account_id
+            CurrentUser.sessionId = sessionId.toString()
+            CurrentUser.accountId = accountId
 
             CurrentUser.needToInit = false
         }
     }
 
-    private fun saveCurrentUser(){
+    private fun saveCurrentUser() {
             var pref: SharedPreferences = getSharedPreferences("MyPref", 0)
             val editor = pref.edit()
             editor.putString("session_id", CurrentUser.sessionId)

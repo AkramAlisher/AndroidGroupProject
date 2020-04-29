@@ -51,6 +51,11 @@ class AllFilmsFragment: Fragment(), CoroutineScope {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        bindViews(view)
+        getAllMovies()
+    }
+
+    private fun bindViews(view: View) = with(view) {
         recyclerView = view.findViewById(R.id.recyclerView)
         swipeRefreshLayout = view.findViewById(R.id.all_films_refresh)
         recyclerView.layoutManager = LinearLayoutManager(activity)
@@ -61,10 +66,7 @@ class AllFilmsFragment: Fragment(), CoroutineScope {
         swipeRefreshLayout.setOnRefreshListener {
             getAllMovies()
         }
-
-        getAllMovies()
     }
-
 
     private fun getAllMovies() {
         swipeRefreshLayout.isRefreshing = true
@@ -98,7 +100,6 @@ class AllFilmsFragment: Fragment(), CoroutineScope {
 
     override fun onDestroy() {
         super.onDestroy()
-        Log.i("AllFilmsFragment", "onDestroy")
         job.cancel()
     }
 }

@@ -19,15 +19,15 @@ import java.util.*
 import kotlin.coroutines.CoroutineContext
 
 
-class movieDetails : AppCompatActivity(), CoroutineScope {
+class MovieDetails : AppCompatActivity(), CoroutineScope {
 
-    var movieId: Int = 0
-    var isLiked = false
-    var movie: Movie? = null
-    lateinit var swipeRefreshLayout: SwipeRefreshLayout
-    var favouriteMovie: List<Movie>? = null
-    lateinit var likeButton: Button
-    var movieDao = MovieDatabase.getDatabase(context = this).movieDao()
+    private var movieId: Int = 0
+    private var isLiked = false
+    private var movie: Movie? = null
+    private lateinit var swipeRefreshLayout: SwipeRefreshLayout
+    private var favouriteMovie: List<Movie>? = null
+    private lateinit var likeButton: Button
+    private var movieDao = MovieDatabase.getDatabase(context = this).movieDao()
 
     private val job = Job()
 
@@ -80,7 +80,7 @@ class movieDetails : AppCompatActivity(), CoroutineScope {
             finish()
         }
 
-        if(CurrentUser.sessionId != "") {
+        if (CurrentUser.sessionId != "") {
             getFavouritesMovies()
 
             likeButton.setOnClickListener {
@@ -89,7 +89,7 @@ class movieDetails : AppCompatActivity(), CoroutineScope {
         } else {
             swipeRefreshLayout.isRefreshing = false
             likeButton.setOnClickListener {
-                Toast.makeText(this@movieDetails, "Please, log in!", Toast.LENGTH_LONG).show()
+                Toast.makeText(this@MovieDetails, "Please, log in!", Toast.LENGTH_LONG).show()
             }
         }
     }
@@ -104,15 +104,15 @@ class movieDetails : AppCompatActivity(), CoroutineScope {
                 }
                 val response: Response<JsonObject> =
                     RetrofitService.getPostApi().markAsFavourite(CurrentUser.accountId, CurrentUser.apiKey, CurrentUser.sessionId, body)
-                if (response.isSuccessful){
+                if (response.isSuccessful) {
                     if(!isLiked)
-                        Toast.makeText(this@movieDetails, "Movie was added!", Toast.LENGTH_LONG).show()
+                        Toast.makeText(this@MovieDetails, "Movie was added!", Toast.LENGTH_LONG).show()
                     else
-                        Toast.makeText(this@movieDetails,"Movie was deleted!", Toast.LENGTH_LONG).show()
+                        Toast.makeText(this@MovieDetails,"Movie was deleted!", Toast.LENGTH_LONG).show()
                     getFavouritesMovies()
                 }
             } catch (e: Exception) {
-                Toast.makeText(this@movieDetails, "Please, check your internet connection!", Toast.LENGTH_LONG).show()
+                Toast.makeText(this@MovieDetails, "Please, check your internet connection!", Toast.LENGTH_LONG).show()
                 swipeRefreshLayout.isRefreshing = false
             }
         }
@@ -130,7 +130,7 @@ class movieDetails : AppCompatActivity(), CoroutineScope {
                     initVariables()
                 }
             } catch (e: Exception) {
-                Toast.makeText(this@movieDetails, "Please, check your internet connection!", Toast.LENGTH_LONG).show()
+                Toast.makeText(this@MovieDetails, "Please, check your internet connection!", Toast.LENGTH_LONG).show()
                 var movies: List<Movie>? = null
                 withContext(Dispatchers.IO) {
                     movies = movieDao?.getAll()
@@ -173,10 +173,15 @@ class movieDetails : AppCompatActivity(), CoroutineScope {
                     swipeRefreshLayout.isRefreshing = false
                 }
             } catch (e: Exception) {
-                Toast.makeText(this@movieDetails, "Please, check your internet connection!", Toast.LENGTH_LONG).show()
+                Toast.makeText(this@MovieDetails, "Please, check your internet connection!", Toast.LENGTH_LONG).show()
                 swipeRefreshLayout.isRefreshing = false
             }
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        job.cancel()
     }
 }
 

@@ -28,11 +28,11 @@ import kotlin.coroutines.CoroutineContext
 
 class FavouriteFragment: Fragment(), CoroutineScope {
 
-    lateinit var recyclerView: RecyclerView
-    lateinit var swipeRefreshLayout: SwipeRefreshLayout
-    lateinit var appBarTitle: TextView
+    private lateinit var recyclerView: RecyclerView
+    private lateinit var swipeRefreshLayout: SwipeRefreshLayout
+    private lateinit var appBarTitle: TextView
     private var movieListAdapter: MovieListAdapter? = null
-    var movies: List<Movie>? = ArrayList()
+    private var movies: List<Movie>? = ArrayList()
 
     private val job = Job()
 
@@ -51,13 +51,15 @@ class FavouriteFragment: Fragment(), CoroutineScope {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        bindViews(view)
+    }
 
+    private fun bindViews(view: View) = with(view) {
         appBarTitle = view.findViewById(R.id.appbar_title)
         recyclerView = view.findViewById(R.id.favourite_recycle_view)
         swipeRefreshLayout = view.findViewById(R.id.favourite_films_refresh)
         recyclerView.layoutManager = LinearLayoutManager(activity)
         recyclerView.itemAnimator = DefaultItemAnimator()
-
         swipeRefreshLayout.setOnRefreshListener {
             getFavouriteMovies()
         }
@@ -68,12 +70,12 @@ class FavouriteFragment: Fragment(), CoroutineScope {
         val lang: String = "en-US"
         launch {
             try {
-                val response: Response<MovieResponse> =
-                    RetrofitService.getPostApi().getFavouritesMoviesList(CurrentUser.accountId, CurrentUser.apiKey, CurrentUser.sessionId,1, lang)
-                if (response.isSuccessful){
+                val response: Response<MovieResponse> = RetrofitService.getPostApi().
+                    getFavouritesMoviesList(CurrentUser.accountId, CurrentUser.apiKey, CurrentUser.sessionId,1, lang)
+                if (response.isSuccessful) {
                     movies = response.body()?.results
                 }
-            } catch (e: Exception){
+            } catch (e: Exception) {
                 Toast.makeText(this@FavouriteFragment.context, "Please, check your internet connection and try again!", Toast.LENGTH_LONG).show()
                 swipeRefreshLayout.isRefreshing = false
             } finally {
@@ -87,10 +89,10 @@ class FavouriteFragment: Fragment(), CoroutineScope {
     override fun onResume() {
         super.onResume()
         Log.e("FavFragment", "onResume")
-        if(CurrentUser.sessionId != "") {
+        if (CurrentUser.sessionId != "") {
             appBarTitle.setText("My favourite films")
             getFavouriteMovies()
-        }else{
+        } else {
             appBarTitle.setText("Please, log in!")
             movieListAdapter?.moviesList = null
             movieListAdapter?.notifyDataSetChanged()
@@ -99,15 +101,20 @@ class FavouriteFragment: Fragment(), CoroutineScope {
 
     override fun setUserVisibleHint(isVisibleToUser: Boolean) {
         super.setUserVisibleHint(isVisibleToUser)
-        if(isVisibleToUser){
+        if (isVisibleToUser) {
             if(CurrentUser.sessionId != "") {
                 appBarTitle.setText("My favourite films")
                 getFavouriteMovies()
-            }else {
+            } else {
                 appBarTitle.setText("Please, log in!")
                 movieListAdapter?.moviesList = null
                 movieListAdapter?.notifyDataSetChanged()
             }
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        job.cancel()
     }
 }

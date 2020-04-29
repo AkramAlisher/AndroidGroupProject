@@ -22,7 +22,7 @@
         android:supportsRtl="true"
         android:testOnly="true"
         android:theme="@style/AppTheme" >
-        <activity android:name="com.example.movieapp30.movieDetails" />
+        <activity android:name="com.example.movieapp30.MovieDetails" />
         <activity android:name="com.example.movieapp30.login.LoginActivity" />
         <activity android:name="com.example.movieapp30.MainActivity" >
             <intent-filter>
