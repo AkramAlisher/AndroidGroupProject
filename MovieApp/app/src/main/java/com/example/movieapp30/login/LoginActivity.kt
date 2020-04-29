@@ -1,9 +1,6 @@
 package com.example.movieapp30.login
 
-import android.content.SharedPreferences
 import android.os.Bundle
-import android.util.Log
-import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
@@ -13,189 +10,116 @@ import com.example.movieapp30.api.RetrofitService
 import com.example.movieapp30.model.AccountDetailsResponse
 import com.example.movieapp30.model.CreateSessionResponse
 import com.example.movieapp30.model.GetRequestTokenResponse
-import com.google.gson.GsonBuilder
 import com.google.gson.JsonObject
-import com.google.gson.reflect.TypeToken
-import retrofit2.Call
-import retrofit2.Callback
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import retrofit2.Response
-import java.lang.reflect.Type
+import kotlin.coroutines.CoroutineContext
 
-class LoginActivity : AppCompatActivity() {
+class LoginActivity : AppCompatActivity(), CoroutineScope {
 
     private lateinit var username: EditText
     private lateinit var password: EditText
     private lateinit var loginButton: Button
     private lateinit var requestToken: String
 
+    private val job = Job()
+
+    override val coroutineContext: CoroutineContext
+        get() = Dispatchers.Main + job
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         setContentView(R.layout.activity_login)
 
-        username = findViewById<EditText>(R.id.login_username)
-        password = findViewById<EditText>(R.id.login_password)
-        loginButton = findViewById<Button>(R.id.login_button)
+        username = findViewById(R.id.login_username)
+        password = findViewById(R.id.login_password)
+        loginButton = findViewById(R.id.login_button)
 
-        loginButton.setOnClickListener(object : View.OnClickListener {
-            override fun onClick(v: View?) {
-                if (!username.text.isEmpty() && !password.text.isEmpty()) {
-                    if(username.text.toString().equals(CurrentUser.username) && password.text.toString().equals(CurrentUser.password)) {
-                        loginButton.isEnabled = false
-                        getRequestToken()
-                    }else
-                        Toast.makeText(this@LoginActivity, "Username or password are incorrect!", Toast.LENGTH_LONG).show()
+        loginButton.setOnClickListener {
+            if (!username.text.isEmpty() && !password.text.isEmpty()) {
+                if(username.text.toString().equals(CurrentUser.username) && password.text.toString().equals(CurrentUser.password)) {
+                    loginButton.isEnabled = false
+                    getRequestToken()
                 }else
-                    Toast.makeText(this@LoginActivity, "Fill all the forms!", Toast.LENGTH_LONG).show()
+                    Toast.makeText(this@LoginActivity, "Username or password are incorrect!", Toast.LENGTH_LONG).show()
+            }else
+                Toast.makeText(this@LoginActivity, "Fill all the forms!", Toast.LENGTH_LONG).show()
+        }
+    }
+
+    private fun getRequestToken() {
+        launch {
+            try {
+                val response: Response<GetRequestTokenResponse> =
+                    RetrofitService.getPostApi().createRequestToken(CurrentUser.apiKey)
+                if (response.isSuccessful) {
+                    requestToken = (response.body()?.requestToken ?: String) as String
+                    createSessionWithLogin()
+                }
+            } catch (e: Exception) {
+                Toast.makeText(this@LoginActivity, "Please, check your internet connection and try again!", Toast.LENGTH_LONG).show()
+                loginButton.isEnabled = true
             }
-        })
-    }
-
-    fun getRequestToken(){
-        RetrofitService.getPostApi()
-            .createRequestToken(CurrentUser.api_key)
-            .enqueue(object :
-                Callback<GetRequestTokenResponse> {
-                override fun onResponse(
-                    call: Call<GetRequestTokenResponse>,
-                    response: Response<GetRequestTokenResponse>
-                ) {
-
-                    Log.d(
-                        "My_create_guest_session_response",
-                        response.body().toString()
-                    )
-
-                    if (response.isSuccessful) {
-                        requestToken = response.body()!!.request_token
-                        CreateSessionWithLogin()
-                    }
-                }
-
-                override fun onFailure(call: Call<GetRequestTokenResponse>, t: Throwable) {
-                    Log.d(
-                        "CreateGuestSession",
-                        t.message
-                    )
-                    Toast.makeText(
-                        this@LoginActivity,
-                        "Retry once more!",
-                        Toast.LENGTH_LONG
-                    ).show()
-                }
-            })
-    }
-
-    fun CreateSessionWithLogin(){
-        val body = JsonObject().apply {
-            addProperty("username", CurrentUser.username)
-            addProperty("password", CurrentUser.password)
-            addProperty("request_token", requestToken)
         }
-        RetrofitService.getPostApi()
-            .CreateSessionWithLogin(CurrentUser.api_key, body)
-            .enqueue(object :
-                Callback<GetRequestTokenResponse> {
-                override fun onResponse(
-                    call: Call<GetRequestTokenResponse>,
-                    response: Response<GetRequestTokenResponse>
-                ) {
-
-                    Log.d(
-                        "My_create_guest_session_response",
-                        response.body().toString()
-                    )
-
-                    if (response.isSuccessful) {
-                        CreateSession()
-                    }
-                }
-
-                override fun onFailure(call: Call<GetRequestTokenResponse>, t: Throwable) {
-                    Log.d(
-                        "CreateGuestSession",
-                        t.message
-                    )
-                    Toast.makeText(
-                        this@LoginActivity,
-                        "Retry once more!",
-                        Toast.LENGTH_LONG
-                    ).show()
-                }
-            })
     }
 
-    fun CreateSession(){
-        val body = JsonObject().apply {
-            addProperty("request_token", requestToken)
+    private fun createSessionWithLogin() {
+        launch {
+            try {
+                val body = JsonObject().apply {
+                    addProperty("username", CurrentUser.username)
+                    addProperty("password", CurrentUser.password)
+                    addProperty("request_token", requestToken)
+                }
+                val response: Response<GetRequestTokenResponse> =
+                    RetrofitService.getPostApi().createSessionWithLogin(CurrentUser.apiKey, body)
+                if (response.isSuccessful) {
+                    createSession()
+                }
+            } catch (e: Exception) {
+                Toast.makeText(this@LoginActivity, "Please, check your internet connection and try again!", Toast.LENGTH_LONG).show()
+                loginButton.isEnabled = true
+            }
         }
-        RetrofitService.getPostApi()
-            .CreateSession(CurrentUser.api_key, body)
-            .enqueue(object :
-                Callback<CreateSessionResponse> {
-                override fun onResponse(
-                    call: Call<CreateSessionResponse>,
-                    response: Response<CreateSessionResponse>
-                ) {
-
-                    Log.d(
-                        "My_create_guest_session_response",
-                        response.body().toString()
-                    )
-
-                    if (response.isSuccessful) {
-                        CurrentUser.session_id = response.body()!!.session_id
-                        GetAccountDetails()
-                    }
-                }
-
-                override fun onFailure(call: Call<CreateSessionResponse>, t: Throwable) {
-                    Log.d(
-                        "CreateGuestSession",
-                        t.message
-                    )
-                    Toast.makeText(
-                        this@LoginActivity,
-                        "Retry once more!",
-                        Toast.LENGTH_LONG
-                    ).show()
-                }
-            })
     }
 
-    fun GetAccountDetails(){
-        RetrofitService.getPostApi()
-            .getAccountDetails(CurrentUser.api_key, CurrentUser.session_id)
-            .enqueue(object :
-                Callback<AccountDetailsResponse> {
-                override fun onResponse(
-                    call: Call<AccountDetailsResponse>,
-                    response: Response<AccountDetailsResponse>
-                ) {
-
-                    Log.d(
-                        "My_create_guest_session_response",
-                        response.body().toString()
-                    )
-
-                    if (response.isSuccessful) {
-                        CurrentUser.account_id = response.body()!!.id
-                        finish()
-                    }
+    private fun createSession() {
+        launch {
+            try {
+                val body = JsonObject().apply {
+                    addProperty("request_token", requestToken)
                 }
-
-                override fun onFailure(call: Call<AccountDetailsResponse>, t: Throwable) {
-                    Log.d(
-                        "CreateGuestSession",
-                        t.message
-                    )
-                    Toast.makeText(
-                        this@LoginActivity,
-                        "Retry once more!",
-                        Toast.LENGTH_LONG
-                    ).show()
+                val response: Response<CreateSessionResponse> =
+                    RetrofitService.getPostApi().createSession(CurrentUser.apiKey, body)
+                if (response.isSuccessful) {
+                    CurrentUser.sessionId = (response.body()?.sessionId ?: String) as String
+                    getAccountDetails()
                 }
-            })
+            } catch (e: Exception) {
+                Toast.makeText(this@LoginActivity, "Please, check your internet connection and try again!", Toast.LENGTH_LONG).show()
+                loginButton.isEnabled = true
+            }
+        }
+    }
+
+    private fun getAccountDetails() {
+        launch {
+            try {
+                val response: Response<AccountDetailsResponse> =
+                    RetrofitService.getPostApi().getAccountDetails(CurrentUser.apiKey, CurrentUser.sessionId)
+                if (response.isSuccessful) {
+                    CurrentUser.accountId = (response.body()?.id ?: Int) as Int
+                    finish()
+                }
+            } catch (e: Exception) {
+                Toast.makeText(this@LoginActivity, "Please, check your internet connection and try again!", Toast.LENGTH_LONG).show()
+                loginButton.isEnabled = true
+            }
+        }
     }
 }
 

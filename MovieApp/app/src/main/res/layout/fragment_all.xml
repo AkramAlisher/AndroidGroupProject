@@ -53,16 +53,12 @@
         <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-
-
-            android:background="#F1F0F0"
-            app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">
+            android:fillViewport="true">
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="#F1F0F0"
-                android:orientation="vertical">
+                android:layout_height="wrap_content"
+                android:orientation="vertical" >
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/recyclerView"
@@ -71,11 +67,10 @@
                     android:clipToPadding="false"
                     android:scrollbars="vertical"
                     tools:listitem="@layout/movie_list_content" />
-
             </LinearLayout>
-
         </androidx.core.widget.NestedScrollView>
 
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
 
 </LinearLayout>

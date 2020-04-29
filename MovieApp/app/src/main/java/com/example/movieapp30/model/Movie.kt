@@ -1,33 +1,31 @@
 package com.example.movieapp30.model
 
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
-import java.util.*
 
+@Entity(tableName = "movie_table")
 data class Movie (
-
+    @PrimaryKey
     @SerializedName("id")
     val id: Int,
     @SerializedName("vote_count")
-    val vote_count: Int? = null,
+    val voteCount: Int? = null,
     @SerializedName("poster_path")
-    val poster_path: String? = null,
+    val posterPath: String? = null,
     @SerializedName("original_title")
-    val original_title: String? = null,
+    val originalTitle: String? = null,
     @SerializedName("title")
     val title:String? = null,
-    @SerializedName("genre_ids")
-    val genre_ids: List<Int>? = null,
     @SerializedName("overview")
     val overview: String? = null,
     @SerializedName("release_date")
-    val release_date: String? = null,
-    @SerializedName("genres")
-    val genres: List<Genre>? = null,
+    val releaseDate: String? = null,
     @SerializedName("vote_average")
-    val vote_average: Double? = null
+    val voteAverage: Double? = null
 
     ) {
-    fun getPosterPath(): String {
-        return "https://image.tmdb.org/t/p/w500" + poster_path
+    fun getPosterPaths(): String {
+        return "https://image.tmdb.org/t/p/w500" + posterPath
     }
 }
