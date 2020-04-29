@@ -39,6 +39,12 @@
             android:name="com.squareup.picasso.PicassoProvider"
             android:authorities="com.example.movieapp30.com.squareup.picasso"
             android:exported="false" />
+
+        <service
+            android:name="androidx.room.MultiInstanceInvalidationService"
+            android:directBootAware="true"
+            android:exported="false" />
+
         <provider
             android:name="androidx.lifecycle.ProcessLifecycleOwnerInitializer"
             android:authorities="com.example.movieapp30.lifecycle-process"

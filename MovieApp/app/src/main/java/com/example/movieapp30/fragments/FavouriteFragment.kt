@@ -59,11 +59,11 @@ class FavouriteFragment: Fragment(), CoroutineScope {
         recyclerView.itemAnimator = DefaultItemAnimator()
 
         swipeRefreshLayout.setOnRefreshListener {
-            getFavouriteMoviesCoroutine()
+            getFavouriteMovies()
         }
     }
 
-    private fun getFavouriteMoviesCoroutine() {
+    private fun getFavouriteMovies() {
         swipeRefreshLayout.isRefreshing = true
         val lang: String = "en-US"
         launch {
@@ -74,7 +74,8 @@ class FavouriteFragment: Fragment(), CoroutineScope {
                     movies = response.body()?.results
                 }
             } catch (e: Exception){
-                Toast.makeText(this@FavouriteFragment.context, "We have problems with the internet!", Toast.LENGTH_LONG).show()
+                Toast.makeText(this@FavouriteFragment.context, "Please, check your internet connection and try again!", Toast.LENGTH_LONG).show()
+                swipeRefreshLayout.isRefreshing = false
             } finally {
                 movieListAdapter = MovieListAdapter(movies, this@FavouriteFragment.context)
                 recyclerView.adapter = movieListAdapter
@@ -88,7 +89,7 @@ class FavouriteFragment: Fragment(), CoroutineScope {
         Log.e("FavFragment", "onResume")
         if(CurrentUser.sessionId != "") {
             appBarTitle.setText("My favourite films")
-            getFavouriteMoviesCoroutine()
+            getFavouriteMovies()
         }else{
             appBarTitle.setText("Please, log in!")
             movieListAdapter?.moviesList = null
@@ -101,7 +102,7 @@ class FavouriteFragment: Fragment(), CoroutineScope {
         if(isVisibleToUser){
             if(CurrentUser.sessionId != "") {
                 appBarTitle.setText("My favourite films")
-                getFavouriteMoviesCoroutine()
+                getFavouriteMovies()
             }else {
                 appBarTitle.setText("Please, log in!")
                 movieListAdapter?.moviesList = null

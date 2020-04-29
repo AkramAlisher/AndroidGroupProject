@@ -48,15 +48,15 @@ class MovieListAdapter(
 
             id.text = postCnt().toString()
             title.text = movie?.title
-            vote_cnt.text = movie?.vote_count.toString()
-            origTitle.text = movie?.original_title
-            rating.text = movie?.vote_average.toString()
-            vote_cnt.text = movie?.vote_count.toString()
-            val dateTime = initialFormat.parse(movie?.release_date)
+            vote_cnt.text = movie?.voteCount.toString()
+            origTitle.text = movie?.originalTitle
+            rating.text = movie?.voteAverage.toString()
+            vote_cnt.text = movie?.voteCount.toString()
+            val dateTime = initialFormat.parse(movie?.releaseDate)
             date.text = dateFormat.format(dateTime)
 
             Glide.with(view.context)
-                .load(movie?.getPosterPath())
+                .load(movie?.getPosterPaths())
                 .into(poster)
 
             parent.setOnClickListener {

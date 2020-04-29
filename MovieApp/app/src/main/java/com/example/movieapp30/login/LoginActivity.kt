@@ -57,11 +57,12 @@ class LoginActivity : AppCompatActivity(), CoroutineScope {
                 val response: Response<GetRequestTokenResponse> =
                     RetrofitService.getPostApi().createRequestToken(CurrentUser.apiKey)
                 if (response.isSuccessful) {
-                    requestToken = (response.body()?.request_token ?: String) as String
+                    requestToken = (response.body()?.requestToken ?: String) as String
                     createSessionWithLogin()
                 }
             } catch (e: Exception) {
-                Toast.makeText(this@LoginActivity, "Please, check your internet connection!", Toast.LENGTH_LONG).show()
+                Toast.makeText(this@LoginActivity, "Please, check your internet connection and try again!", Toast.LENGTH_LONG).show()
+                loginButton.isEnabled = true
             }
         }
     }
@@ -80,7 +81,8 @@ class LoginActivity : AppCompatActivity(), CoroutineScope {
                     createSession()
                 }
             } catch (e: Exception) {
-                Toast.makeText(this@LoginActivity, "Please, check your internet connection!", Toast.LENGTH_LONG).show()
+                Toast.makeText(this@LoginActivity, "Please, check your internet connection and try again!", Toast.LENGTH_LONG).show()
+                loginButton.isEnabled = true
             }
         }
     }
@@ -94,11 +96,12 @@ class LoginActivity : AppCompatActivity(), CoroutineScope {
                 val response: Response<CreateSessionResponse> =
                     RetrofitService.getPostApi().createSession(CurrentUser.apiKey, body)
                 if (response.isSuccessful) {
-                    CurrentUser.sessionId = (response.body()?.session_id ?: String) as String
+                    CurrentUser.sessionId = (response.body()?.sessionId ?: String) as String
                     getAccountDetails()
                 }
             } catch (e: Exception) {
-                Toast.makeText(this@LoginActivity, "Please, check your internet connection!", Toast.LENGTH_LONG).show()
+                Toast.makeText(this@LoginActivity, "Please, check your internet connection and try again!", Toast.LENGTH_LONG).show()
+                loginButton.isEnabled = true
             }
         }
     }
@@ -113,7 +116,8 @@ class LoginActivity : AppCompatActivity(), CoroutineScope {
                     finish()
                 }
             } catch (e: Exception) {
-                Toast.makeText(this@LoginActivity, "Please, check your internet connection!", Toast.LENGTH_LONG).show()
+                Toast.makeText(this@LoginActivity, "Please, check your internet connection and try again!", Toast.LENGTH_LONG).show()
+                loginButton.isEnabled = true
             }
         }
     }

@@ -16,11 +16,10 @@ import com.example.movieapp30.R
 import com.example.movieapp30.api.RetrofitService
 import com.example.movieapp30.login.CurrentUser
 import com.example.movieapp30.model.Movie
+import com.example.movieapp30.model.MovieDao
+import com.example.movieapp30.model.MovieDatabase
 import com.example.movieapp30.model.MovieResponse
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import retrofit2.Response
 import java.util.ArrayList
 import kotlin.coroutines.CoroutineContext
@@ -31,6 +30,7 @@ class AllFilmsFragment: Fragment(), CoroutineScope {
     lateinit var swipeRefreshLayout: SwipeRefreshLayout
     private var movieListAdapter: MovieListAdapter? = null
     var movies: List<Movie>? = ArrayList()
+    private var movieDao: MovieDao? = null
 
     private val job = Job()
 
@@ -56,6 +56,8 @@ class AllFilmsFragment: Fragment(), CoroutineScope {
         recyclerView.layoutManager = LinearLayoutManager(activity)
         recyclerView.itemAnimator = DefaultItemAnimator()
 
+        movieDao = MovieDatabase.getDatabase(context = this@AllFilmsFragment.context).movieDao()
+
         swipeRefreshLayout.setOnRefreshListener {
             getAllMovies()
         }
@@ -72,11 +74,20 @@ class AllFilmsFragment: Fragment(), CoroutineScope {
                 val response: Response<MovieResponse> =
                     RetrofitService.getPostApi().getPopularMoviesList(CurrentUser.apiKey, 1, lang)
                 if (response.isSuccessful){
-                    movies = response.body()?.results
+                    val result = response.body()?.results
+                    if(!result.isNullOrEmpty()) {
+                        withContext(Dispatchers.IO) {
+                            movieDao?.insertAll(result)
+                        }
+                        movies = result
+                    }
                 }
-            } catch (e: Exception){
-                if(this@AllFilmsFragment.context != null)
-                    Toast.makeText(this@AllFilmsFragment.context, "We have problems with the internet!", Toast.LENGTH_LONG).show()
+            } catch (e: Exception) {
+                withContext(Dispatchers.IO) {
+                    movies = movieDao?.getAll() ?: emptyList()
+                }
+                if (this@AllFilmsFragment.context != null)
+                    Toast.makeText(this@AllFilmsFragment.context, "Please, check your internet connection!", Toast.LENGTH_LONG).show()
             } finally {
                 movieListAdapter = MovieListAdapter(movies, this@AllFilmsFragment.context)
                 recyclerView.adapter = movieListAdapter
@@ -84,7 +95,6 @@ class AllFilmsFragment: Fragment(), CoroutineScope {
             }
         }
     }
-
 
     override fun onDestroy() {
         super.onDestroy()
