@@ -64,14 +64,12 @@ class MovieListAdapter(
                 intent.putExtra("movieId", movie?.id)
                 context?.startActivity(intent)
             }
-
         }
 
         fun postCnt(): Int {
             cnt = cnt + 1
             return cnt
         }
-
     }
 }
 

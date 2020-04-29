@@ -11,10 +11,8 @@ import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import com.example.movieapp30.MainActivity
 import com.example.movieapp30.MovieListAdapter
 import com.example.movieapp30.R
-import com.example.movieapp30.api.PostApi
 import com.example.movieapp30.api.RetrofitService
 import com.example.movieapp30.login.CurrentUser
 import com.example.movieapp30.model.Movie
@@ -23,8 +21,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import retrofit2.Call
-import retrofit2.Callback
 import retrofit2.Response
 import java.util.ArrayList
 import kotlin.coroutines.CoroutineContext
@@ -49,32 +45,38 @@ class AllFilmsFragment: Fragment(), CoroutineScope {
         val view: View = LayoutInflater.from(container?.context)
             .inflate(R.layout.fragment_all, container, false)
 
+        return view
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
         recyclerView = view.findViewById(R.id.recyclerView)
         swipeRefreshLayout = view.findViewById(R.id.all_films_refresh)
         recyclerView.layoutManager = LinearLayoutManager(activity)
         recyclerView.itemAnimator = DefaultItemAnimator()
 
         swipeRefreshLayout.setOnRefreshListener {
-            getAllMoviesCoroutine()
+            getAllMovies()
         }
 
-        getAllMoviesCoroutine()
-
-        return view
+        getAllMovies()
     }
 
-    private fun getAllMoviesCoroutine(){
+
+    private fun getAllMovies() {
         swipeRefreshLayout.isRefreshing = true
         val lang = "en-US"
         launch {
             try {
                 val response: Response<MovieResponse> =
-                    RetrofitService.getPostApi().getPopularMoviesList(CurrentUser.api_key, 1, lang)
+                    RetrofitService.getPostApi().getPopularMoviesList(CurrentUser.apiKey, 1, lang)
                 if (response.isSuccessful){
                     movies = response.body()?.results
                 }
             } catch (e: Exception){
-                Toast.makeText(this@AllFilmsFragment.context, "We have problems with the internet!", Toast.LENGTH_LONG).show()
+                if(this@AllFilmsFragment.context != null)
+                    Toast.makeText(this@AllFilmsFragment.context, "We have problems with the internet!", Toast.LENGTH_LONG).show()
             } finally {
                 movieListAdapter = MovieListAdapter(movies, this@AllFilmsFragment.context)
                 recyclerView.adapter = movieListAdapter
@@ -82,6 +84,7 @@ class AllFilmsFragment: Fragment(), CoroutineScope {
             }
         }
     }
+
 
     override fun onDestroy() {
         super.onDestroy()

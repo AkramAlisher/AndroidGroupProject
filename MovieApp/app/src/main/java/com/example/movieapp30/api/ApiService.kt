@@ -6,7 +6,6 @@ import com.google.gson.GsonBuilder
 import com.google.gson.JsonObject
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
-import retrofit2.Call
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -14,7 +13,7 @@ import retrofit2.http.*
 import java.util.concurrent.TimeUnit
 
 
-object RetrofitService{
+object RetrofitService {
 
     var gson = GsonBuilder()
         .setLenient()
@@ -22,7 +21,7 @@ object RetrofitService{
 
     const val BASE_URL = "https://api.themoviedb.org/3/"
 
-    fun getPostApi(): PostApi{
+    fun getPostApi(): PostApi {
         val retrofit = Retrofit.Builder()
             .baseUrl(BASE_URL)
             .addConverterFactory(GsonConverterFactory.create(gson))
@@ -50,10 +49,10 @@ object RetrofitService{
     }
 }
 
-interface PostApi{
+interface PostApi {
 
     @GET("movie/popular")
-    suspend fun getPopularMoviesList(
+    suspend fun getPopularMoviesList (
         @Query("api_key") apiKey: String?,
         @Query("page") page: Int,
         @Query("language") lang: String?
@@ -61,27 +60,27 @@ interface PostApi{
 
 
     @GET("account/{account_id}/favorite/movies")
-    suspend fun getFavouritesMoviesList(
-        @Path(value = "account_id", encoded = true) account_id: Int,
+    suspend fun getFavouritesMoviesList (
+        @Path(value = "account_id", encoded = true) accountId: Int,
         @Query("api_key") apiKey: String,
-        @Query("session_id") session_id: String,
+        @Query("session_id") sessionId: String,
         @Query("page") page: Int,
         @Query("language") lang: String?
     ): Response<MovieResponse>
 
     @GET("authentication/token/new")
-    suspend fun createRequestToken(
+    suspend fun createRequestToken (
         @Query("api_key") apiKey: String
     ): Response<GetRequestTokenResponse>
 
     @POST("authentication/token/validate_with_login")
-    suspend fun createSessionWithLogin(
+    suspend fun createSessionWithLogin (
         @Query("api_key") apiKey: String?,
         @Body body: JsonObject
     ): Response<GetRequestTokenResponse>
 
     @POST("authentication/session/new")
-    suspend fun createSession(
+    suspend fun createSession (
         @Query("api_key") apiKey: String?,
         @Body body: JsonObject
     ): Response<CreateSessionResponse>
@@ -90,28 +89,28 @@ interface PostApi{
     @Headers(
         "Content-Type: application/json;charset=utf-8"
     )
-    suspend fun getAccountDetails(
+    suspend fun getAccountDetails (
         @Query("api_key") apiKey: String?,
-        @Query("session_id") session_id: String?
+        @Query("session_id") sessionId: String?
     ): Response<AccountDetailsResponse>
 
     @POST("account/{account_id}/favorite")
-    suspend fun markAsFavourite(
-        @Path(value = "account_id", encoded = true) account_id: Int,
+    suspend fun markAsFavourite (
+        @Path(value = "account_id", encoded = true) accountId: Int,
         @Query("api_key") apiKey: String?,
-        @Query("session_id") session_id: String?,
+        @Query("session_id") sessionId: String?,
         @Body body: JsonObject
     ): Response<JsonObject>
 
     @GET("movie/{movie_id}")
-    suspend fun getMovie(
-        @Path(value = "movie_id", encoded = true) movie_id: Int,
+    suspend fun getMovie (
+        @Path(value = "movie_id", encoded = true) movieId: Int,
         @Query("api_key") apiKey: String?,
         @Query("language") lang: String?
     ): Response<Movie>
 
     @HTTP(method = "DELETE", path = "authentication/session", hasBody = true)
-    suspend fun deleteSession(
+    suspend fun deleteSession (
         @Query("api_key") apiKey: String,
         @Body body: JsonObject
     ): Response<JsonObject>

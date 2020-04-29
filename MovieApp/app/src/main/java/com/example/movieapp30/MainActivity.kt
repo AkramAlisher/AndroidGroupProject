@@ -3,29 +3,11 @@ package com.example.movieapp30
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.viewpager.widget.ViewPager
 import androidx.viewpager.widget.ViewPager.OnPageChangeListener
-import com.example.movieapp30.api.PostApi
-import com.example.movieapp30.api.RetrofitService
-import com.example.movieapp30.fragments.AllFilmsFragment
 import com.example.movieapp30.login.CurrentUser
-import com.example.movieapp30.model.Movie
-import com.example.movieapp30.model.MovieResponse
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.google.gson.GsonBuilder
-import com.google.gson.reflect.TypeToken
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import java.lang.reflect.Type
-import java.util.ArrayList
-import kotlin.coroutines.CoroutineContext
 
 class MainActivity : AppCompatActivity() {
 
@@ -47,8 +29,8 @@ class MainActivity : AppCompatActivity() {
             val session_id = pref.getString("session_id", null)
             val account_id = pref.getInt("account_id", 0)
 
-            CurrentUser.session_id = session_id.toString()
-            CurrentUser.account_id = account_id
+            CurrentUser.sessionId = session_id.toString()
+            CurrentUser.accountId = account_id
 
             CurrentUser.needToInit = false
         }
@@ -57,9 +39,9 @@ class MainActivity : AppCompatActivity() {
     private fun saveCurrentUser(){
             var pref: SharedPreferences = getSharedPreferences("MyPref", 0)
             val editor = pref.edit()
-            editor.putString("session_id", CurrentUser.session_id);
-            editor.putInt("account_id", CurrentUser.account_id);
-            editor.commit();
+            editor.putString("session_id", CurrentUser.sessionId)
+        editor.putInt("account_id", CurrentUser.accountId)
+        editor.commit()
     }
 
     private fun initFragmentPagerAdapter() {
@@ -72,14 +54,13 @@ class MainActivity : AppCompatActivity() {
                 position: Int,
                 positionOffset: Float,
                 positionOffsetPixels: Int
-            ) {
-            }
+            ) {}
 
             override fun onPageSelected(position: Int) {
                 when (position) {
-                    0 -> bottomNavigationView.getMenu().findItem(R.id.nav_all).setChecked(true)
-                    1 -> bottomNavigationView.getMenu().findItem(R.id.nav_favourite).setChecked(true)
-                    2 -> bottomNavigationView.getMenu().findItem(R.id.nav_profile).setChecked(true)
+                    0 -> bottomNavigationView.menu.findItem(R.id.nav_all).isChecked = true
+                    1 -> bottomNavigationView.menu.findItem(R.id.nav_favourite).isChecked = true
+                    2 -> bottomNavigationView.menu.findItem(R.id.nav_profile).isChecked = true
                 }
             }
 
@@ -87,15 +68,15 @@ class MainActivity : AppCompatActivity() {
         })
     }
 
-    private fun initBottomNavigation(){
+    private fun initBottomNavigation() {
         bottomNavigationView = findViewById(R.id.bottomNavigationView)
-        viewPager.setCurrentItem(0)
+        viewPager.currentItem = 0
 
-        bottomNavigationView.setOnNavigationItemSelectedListener { item ->
+        bottomNavigationView.setOnNavigationItemSelectedListener {item ->
             when (item.itemId) {
-                R.id.nav_all -> viewPager.setCurrentItem(0)
-                R.id.nav_favourite -> viewPager.setCurrentItem(1)
-                R.id.nav_profile -> viewPager.setCurrentItem(2)
+                R.id.nav_all -> viewPager.currentItem = 0
+                R.id.nav_favourite -> viewPager.currentItem = 1
+                R.id.nav_profile -> viewPager.currentItem = 2
             }
             return@setOnNavigationItemSelectedListener true
         }

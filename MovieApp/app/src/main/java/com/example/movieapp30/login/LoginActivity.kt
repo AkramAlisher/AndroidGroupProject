@@ -1,7 +1,6 @@
 package com.example.movieapp30.login
 
 import android.os.Bundle
-import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
@@ -36,40 +35,38 @@ class LoginActivity : AppCompatActivity(), CoroutineScope {
 
         setContentView(R.layout.activity_login)
 
-        username = findViewById<EditText>(R.id.login_username)
-        password = findViewById<EditText>(R.id.login_password)
-        loginButton = findViewById<Button>(R.id.login_button)
+        username = findViewById(R.id.login_username)
+        password = findViewById(R.id.login_password)
+        loginButton = findViewById(R.id.login_button)
 
-        loginButton.setOnClickListener(object : View.OnClickListener {
-            override fun onClick(v: View?) {
-                if (!username.text.isEmpty() && !password.text.isEmpty()) {
-                    if(username.text.toString().equals(CurrentUser.username) && password.text.toString().equals(CurrentUser.password)) {
-                        loginButton.isEnabled = false
-                        getRequestToken()
-                    }else
-                        Toast.makeText(this@LoginActivity, "Username or password are incorrect!", Toast.LENGTH_LONG).show()
+        loginButton.setOnClickListener {
+            if (!username.text.isEmpty() && !password.text.isEmpty()) {
+                if(username.text.toString().equals(CurrentUser.username) && password.text.toString().equals(CurrentUser.password)) {
+                    loginButton.isEnabled = false
+                    getRequestToken()
                 }else
-                    Toast.makeText(this@LoginActivity, "Fill all the forms!", Toast.LENGTH_LONG).show()
-            }
-        })
+                    Toast.makeText(this@LoginActivity, "Username or password are incorrect!", Toast.LENGTH_LONG).show()
+            }else
+                Toast.makeText(this@LoginActivity, "Fill all the forms!", Toast.LENGTH_LONG).show()
+        }
     }
 
-    private fun getRequestToken(){
+    private fun getRequestToken() {
         launch {
             try {
                 val response: Response<GetRequestTokenResponse> =
-                    RetrofitService.getPostApi().createRequestToken(CurrentUser.api_key)
-                if (response.isSuccessful){
-                    requestToken = response.body()!!.request_token
+                    RetrofitService.getPostApi().createRequestToken(CurrentUser.apiKey)
+                if (response.isSuccessful) {
+                    requestToken = (response.body()?.request_token ?: String) as String
                     createSessionWithLogin()
                 }
-            } catch (e: Exception){
-                Toast.makeText( this@LoginActivity, "We have problems with the internet!", Toast.LENGTH_LONG).show()
+            } catch (e: Exception) {
+                Toast.makeText(this@LoginActivity, "Please, check your internet connection!", Toast.LENGTH_LONG).show()
             }
         }
     }
 
-    fun createSessionWithLogin(){
+    private fun createSessionWithLogin() {
         launch {
             try {
                 val body = JsonObject().apply {
@@ -78,45 +75,45 @@ class LoginActivity : AppCompatActivity(), CoroutineScope {
                     addProperty("request_token", requestToken)
                 }
                 val response: Response<GetRequestTokenResponse> =
-                    RetrofitService.getPostApi().createSessionWithLogin(CurrentUser.api_key, body)
-                if (response.isSuccessful){
+                    RetrofitService.getPostApi().createSessionWithLogin(CurrentUser.apiKey, body)
+                if (response.isSuccessful) {
                     createSession()
                 }
-            } catch (e: Exception){
-                Toast.makeText( this@LoginActivity, "We have problems with the internet!", Toast.LENGTH_LONG).show()
+            } catch (e: Exception) {
+                Toast.makeText(this@LoginActivity, "Please, check your internet connection!", Toast.LENGTH_LONG).show()
             }
         }
     }
 
-    fun createSession(){
+    private fun createSession() {
         launch {
             try {
                 val body = JsonObject().apply {
                     addProperty("request_token", requestToken)
                 }
                 val response: Response<CreateSessionResponse> =
-                    RetrofitService.getPostApi().createSession(CurrentUser.api_key, body)
-                if (response.isSuccessful){
-                    CurrentUser.session_id = response.body()!!.session_id
+                    RetrofitService.getPostApi().createSession(CurrentUser.apiKey, body)
+                if (response.isSuccessful) {
+                    CurrentUser.sessionId = (response.body()?.session_id ?: String) as String
                     getAccountDetails()
                 }
-            } catch (e: Exception){
-                Toast.makeText( this@LoginActivity, "We have problems with the internet!", Toast.LENGTH_LONG).show()
+            } catch (e: Exception) {
+                Toast.makeText(this@LoginActivity, "Please, check your internet connection!", Toast.LENGTH_LONG).show()
             }
         }
     }
 
-    fun getAccountDetails(){
+    private fun getAccountDetails() {
         launch {
             try {
                 val response: Response<AccountDetailsResponse> =
-                    RetrofitService.getPostApi().getAccountDetails(CurrentUser.api_key, CurrentUser.session_id)
-                if (response.isSuccessful){
-                    CurrentUser.account_id = response.body()!!.id
+                    RetrofitService.getPostApi().getAccountDetails(CurrentUser.apiKey, CurrentUser.sessionId)
+                if (response.isSuccessful) {
+                    CurrentUser.accountId = (response.body()?.id ?: Int) as Int
                     finish()
                 }
-            } catch (e: Exception){
-                Toast.makeText( this@LoginActivity, "We have problems with the internet!", Toast.LENGTH_LONG).show()
+            } catch (e: Exception) {
+                Toast.makeText(this@LoginActivity, "Please, check your internet connection!", Toast.LENGTH_LONG).show()
             }
         }
     }

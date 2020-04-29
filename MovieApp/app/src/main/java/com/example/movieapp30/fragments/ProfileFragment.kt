@@ -1,10 +1,7 @@
 package com.example.movieapp30.fragments
 
 import android.content.Intent
-import android.content.SharedPreferences
 import android.os.Bundle
-import android.util.JsonReader
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,17 +14,12 @@ import com.example.movieapp30.api.RetrofitService
 import com.example.movieapp30.login.CurrentUser
 import com.example.movieapp30.login.LoginActivity
 import com.google.gson.JsonObject
-import com.google.gson.reflect.TypeToken
 import de.hdodenhof.circleimageview.CircleImageView
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import retrofit2.Call
-import retrofit2.Callback
 import retrofit2.Response
-import java.lang.reflect.Type
-import java.util.*
 import kotlin.coroutines.CoroutineContext
 
 
@@ -42,8 +34,6 @@ class ProfileFragment : Fragment(), CoroutineScope {
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.Main + job
 
-    val LOG_TAG = "ProfileFragment"
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -51,9 +41,13 @@ class ProfileFragment : Fragment(), CoroutineScope {
     ): View? {
 
         val root = inflater.inflate(R.layout.fragment_profile, container, false)
-        login_logout_button = root.findViewById(R.id.login_logout_button)
-        profile_username = root.findViewById(R.id.profile_username)
-        profile_image = root.findViewById(R.id.profile_image)
+        return root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        login_logout_button = view.findViewById(R.id.login_logout_button)
+        profile_username = view.findViewById(R.id.profile_username)
+        profile_image = view.findViewById(R.id.profile_image)
 
         checkStatus()
 
@@ -62,22 +56,19 @@ class ProfileFragment : Fragment(), CoroutineScope {
                 if(!CurrentUser.userLoggedIn()){
                     val intent = Intent(v?.context, LoginActivity::class.java)
                     startActivity(intent)
-                }else{
+                } else {
                     deleteSession()
                 }
             }
         })
-
-        return root
     }
 
-    fun checkStatus(){
+    fun checkStatus() {
         if(CurrentUser.userLoggedIn()) {
             login_logout_button.setText("Log out")
             profile_username.setText(CurrentUser.username)
             profile_image.visibility = CircleImageView.VISIBLE
-        }
-        else{
+        } else {
             login_logout_button.setText("Log In")
             profile_username.setText("My Movie App")
             profile_image.visibility = CircleImageView.INVISIBLE
@@ -89,26 +80,21 @@ class ProfileFragment : Fragment(), CoroutineScope {
         checkStatus()
     }
 
-    fun deleteSession(){
+    fun deleteSession() {
         launch {
             try {
                 val body = JsonObject().apply {
-                    addProperty("session_id", CurrentUser.session_id)
+                    addProperty("session_id", CurrentUser.sessionId)
                 }
                 val response: Response<JsonObject> =
-                    RetrofitService.getPostApi().deleteSession(CurrentUser.api_key, body)
+                    RetrofitService.getPostApi().deleteSession(CurrentUser.apiKey, body)
                 if (response.isSuccessful){
-                    CurrentUser.session_id = ""
+                    CurrentUser.sessionId = ""
                     checkStatus()
-                    Toast.makeText(
-                        context,
-                        "You was successful log out!",
-                        Toast.LENGTH_LONG
-                    ).show()
+                    Toast.makeText(context, "You was successful log out!", Toast.LENGTH_LONG).show()
                 }
-            } catch (e: Exception){
-                //Toast.makeText( this@ProfileFragment.context, "We have problems with the internet!", Toast.LENGTH_LONG).show()
-                Toast.makeText( this@ProfileFragment.context, e.toString(), Toast.LENGTH_LONG).show()
+            } catch (e: Exception) {
+                Toast.makeText(this@ProfileFragment.context, "We have problems with the internet!", Toast.LENGTH_LONG).show()
             }
         }
     }

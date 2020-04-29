@@ -46,6 +46,11 @@ class FavouriteFragment: Fragment(), CoroutineScope {
     ): View? {
         val view: View = LayoutInflater.from(container?.context)
             .inflate(R.layout.fragment_favorite, container, false)
+        return view
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         appBarTitle = view.findViewById(R.id.appbar_title)
         recyclerView = view.findViewById(R.id.favourite_recycle_view)
@@ -56,18 +61,15 @@ class FavouriteFragment: Fragment(), CoroutineScope {
         swipeRefreshLayout.setOnRefreshListener {
             getFavouriteMoviesCoroutine()
         }
-
-
-        return view
     }
 
-    private fun getFavouriteMoviesCoroutine(){
+    private fun getFavouriteMoviesCoroutine() {
         swipeRefreshLayout.isRefreshing = true
         val lang: String = "en-US"
         launch {
             try {
                 val response: Response<MovieResponse> =
-                    RetrofitService.getPostApi().getFavouritesMoviesList(CurrentUser.account_id, CurrentUser.api_key, CurrentUser.session_id,1, lang)
+                    RetrofitService.getPostApi().getFavouritesMoviesList(CurrentUser.accountId, CurrentUser.apiKey, CurrentUser.sessionId,1, lang)
                 if (response.isSuccessful){
                     movies = response.body()?.results
                 }
@@ -84,7 +86,7 @@ class FavouriteFragment: Fragment(), CoroutineScope {
     override fun onResume() {
         super.onResume()
         Log.e("FavFragment", "onResume")
-        if(CurrentUser.session_id != "") {
+        if(CurrentUser.sessionId != "") {
             appBarTitle.setText("My favourite films")
             getFavouriteMoviesCoroutine()
         }else{
@@ -97,7 +99,7 @@ class FavouriteFragment: Fragment(), CoroutineScope {
     override fun setUserVisibleHint(isVisibleToUser: Boolean) {
         super.setUserVisibleHint(isVisibleToUser)
         if(isVisibleToUser){
-            if(CurrentUser.session_id != "") {
+            if(CurrentUser.sessionId != "") {
                 appBarTitle.setText("My favourite films")
                 getFavouriteMoviesCoroutine()
             }else {
